@@ -1,0 +1,18 @@
+
+version: "2"
+
+services:
+  ermes:
+    build: .
+    command: ./main
+    env_file:
+      - .env
+    links:
+      - mongo
+  mongo:
+    image: mongo
+    volumes:
+      - /data/db
+    ports:
+      - "27017:27017"
+    command: "--smallfiles --logpath=/dev/null"

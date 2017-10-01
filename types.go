@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ahmdrz/goinsta"
+	scribble "github.com/nanobox-io/golang-scribble"
 	"gopkg.in/mgo.v2"
 )
 
@@ -9,6 +10,7 @@ import (
 type App struct {
 	api        *goinsta.Instagram
 	db         *mgo.Database
+	db2        *scribble.Driver
 	session    *mgo.Session
 	username   string
 	password   string

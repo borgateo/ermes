@@ -32,8 +32,11 @@ func New() *App {
 	}
 }
 
+type Fish struct{ Name string }
+
 func main() {
-	fmt.Printf("Welcome to Ermes! 👻 \n")
+	fmt.Printf("\nWelcome to Ermes\n")
+	fmt.Printf("~~~~~~~~~~~~~~~~\n\n")
 
 	app := New()
 	app.Login()

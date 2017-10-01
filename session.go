@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/ahmdrz/goinsta"
-	"gopkg.in/mgo.v2"
+	scribble "github.com/nanobox-io/golang-scribble"
 )
 
 func (a *App) Login() {
 
-	fmt.Printf("Login...\n")
+	fmt.Printf("Please wait. 🔑 Login... \n")
 
 	a.api = goinsta.New(a.username, a.password)
 
@@ -25,15 +25,10 @@ func (a *App) Logout() {
 }
 
 func (a *App) InitDB() {
-	session, err := mgo.Dial(os.Getenv("MONGO_PORT"))
+	db, err := scribble.New(os.Getenv("STORAGE_PATH"), nil)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error", err)
 	}
-	a.session = session
 
-	a.db = a.session.DB(os.Getenv("MONGO_DB"))
-}
-
-func (a *App) CloseDB() {
-	a.session.Close()
+	a.db2 = db
 }
