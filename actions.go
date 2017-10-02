@@ -21,18 +21,6 @@ func (a *App) Unfollow() {
 
 // Like user's feed
 func (a *App) LikeFeed() {
-	a.getFollowings()
-
+	a.getFollowers()
+	a.likeFollowersPosts()
 }
-
-// moreFollowers, _ := a.db2.ReadAll("followers")
-
-// 	// iterate over morefish creating a new fish for each record
-// 	followers := []InstagramUser{}
-// 	for _, follower := range moreFollowers {
-// 		f := InstagramUser{}
-// 		json.Unmarshal([]byte(follower), &f)
-// 		followers = append(followers, f)
-// 	}
-
-// 	fmt.Printf("It's a lot of fish! %#v\n", followers)

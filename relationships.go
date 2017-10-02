@@ -99,3 +99,13 @@ func (a *App) showList() {
 	}
 
 }
+
+func (a *App) follow() {
+	// ID := ???
+	// // TODO add a comment?
+	// respFollow, errFollow := a.api.Follow(ID)
+	// if errFollow != nil {
+	// 	log.Panicf("Got error when Following : %s", errFollow)
+	// }
+	// log.Printf("Started to follow %s - response: %v ", f.Username, respFollow)
+}

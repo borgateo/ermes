@@ -10,7 +10,7 @@ import (
 
 func (a *App) Login() {
 
-	fmt.Printf("Please wait. 🔑 Login... \n")
+	fmt.Printf("🔑  Login - Please wait...\n")
 
 	a.api = goinsta.New(a.username, a.password)
 

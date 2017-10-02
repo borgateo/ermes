@@ -1,28 +1,46 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+	"os"
+	"strconv"
 	"time"
 )
 
-func (a *App) likeFollowings() {
-	for following := range a.followings {
-		fID := results[following].ID
-		fUsername := results[following].Username
+func (a *App) likeFollowersPosts() {
+	likeMaxString := os.Getenv("LIKE_MAX")
+	likeMax, err := strconv.Atoi(likeMaxString)
+	if err != nil {
+		likeMax = 3
+	}
 
-		resp, err2 := a.api.UserFeed(fID, "", "")
+	data, _ := a.db2.ReadAll("followers")
+
+	// followings := []InstagramUser{}
+	for _, following := range data {
+		f := InstagramUser{}
+		json.Unmarshal([]byte(following), &f)
+
+		log.Printf("\nSending some love to %+v", f.Username)
+
+		resp, err := a.api.UserFeed(f.ID, "", "")
 		if err != nil {
-			log.Panicf("Got error when getting UserFeed: %s", err2)
+			log.Panicf("Got error when getting UserFeed: %s", err)
 		}
 
-		log.Printf("Followers feed: %+v", resp)
+		// log.Printf("\nFeed: %+v", resp)
 
 		// UserFeed response struct:
 		// {Status:ok ,NumResults:13, AutoLoadMoreEnabled:true,
 		// Items: [{TakenAt, ID, HasLiked, ...more }]
-		counter := 0
+		n := 0
 		for _, item := range resp.Items {
-			// next pic is already liked
+			// Don't like more than N pics
+			if n > likeMax {
+				break
+			}
+			// Move on if pic already liked
 			if item.HasLiked == true {
 				continue
 			}
@@ -31,21 +49,9 @@ func (a *App) likeFollowings() {
 			if errLike != nil {
 				log.Panicf("Got error when Liking : %s", errLike)
 			}
-			log.Printf("Liked %+v", respLike)
+			log.Printf("👍 liked %+v", respLike)
 
-			// Don't like more than 3 pics -- TODO: configurable?
-			if counter > 3 {
-				// and finally follow her/him
-				// TODO add a comment?
-				respFollow, errFollow := a.api.Follow(fID)
-				if errFollow != nil {
-					log.Panicf("Got error when Following : %s", errFollow)
-				}
-				log.Printf("Started to follow %s - response: %v ", fUsername, respFollow)
-				break
-			}
-
-			counter++
+			n++
 			time.Sleep(time.Duration(a.Wait) * time.Second)
 		}
 
