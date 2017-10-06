@@ -1,18 +1,28 @@
 
+## Install
+`$ go get -v github.com/borteo/ermes`
 
-`go build`
-`./ermes`
+## Run w/o docker-compose
 
-## Requirements
+If you have already govendor install, start from point 2:
+
+1. `$go get -u github.com/kardianos/govendor`
+2. `$ govendor sync`
+3. `$ go build`
+4. `$ ./ermes`
+
+
+## Run w/ docker-compose
+### Requirements
 Docker
 Docker-compose
 
-
-## How to run
+### How to run
 `docker-compose up --build`
 
-https://github.com/ahmdrz/goinsta
+Refs:
 
-https://github.com/kirsle/follow-sync
+- https://github.com/ahmdrz/goinsta
+- https://github.com/kirsle/follow-sync
 
 

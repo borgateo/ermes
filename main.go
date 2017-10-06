@@ -13,7 +13,7 @@ import (
 func New() *App {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("ERROR: something went wrong with your .env file")
 	}
 
 	waitingTimeString := os.Getenv("WAITING_TIME")
@@ -49,7 +49,7 @@ func main() {
 
 	//app.Unfollow()
 
-	//app.FollowVIPFollowers("vida_nomade")
+	//app.FollowVIPFollowers("username")
 
 	app.LikeFeedFollowings()
 }
