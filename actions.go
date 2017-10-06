@@ -20,7 +20,13 @@ func (a *App) Unfollow() {
 }
 
 // Like user's feed
-func (a *App) LikeFeed() {
+func (a *App) LikeFeedFollowers() {
 	a.getFollowers()
 	a.likeFollowersPosts()
+}
+
+// Like user's feed
+func (a *App) LikeFeedFollowings() {
+	a.getFollowings()
+	a.likeFollowingsPosts()
 }

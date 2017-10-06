@@ -24,6 +24,7 @@ type InstagramUser struct {
 	ID        int64
 	Username  string
 	IsPrivate bool
+	IsLiked   bool
 }
 
 type Followers struct {

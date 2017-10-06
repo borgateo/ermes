@@ -11,6 +11,18 @@ import (
 // getFollowers gets users that follow us.
 func (a *App) getFollowers() {
 	log.Println("Collecting your 'Followers' list")
+
+	// Resp data
+	// Username: string
+	// HasAnonymousProfilePicture: bool
+	// ProfilePictureID: int
+	// ProfilePictureURL:	URL
+	// FullName: string
+	// ID: int
+	// IsVerified: bool
+	// IsPrivate: bool
+	// IsFavorite: bool
+	// IsUnpublished: bool
 	resp, err := a.api.SelfTotalUserFollowers()
 	if err != nil {
 		panic(err)
@@ -18,8 +30,11 @@ func (a *App) getFollowers() {
 
 	for _, user := range resp.Users {
 		username := strings.ToLower(user.Username)
+
+		log.Printf("USER data %+v \n", user)
+
 		a.followers[username] = true
-		a.db2.Write("followers", username, InstagramUser{ID: user.ID, Username: username})
+		a.db2.Write("followers", username, InstagramUser{ID: user.ID, Username: username, IsPrivate: user.IsPrivate, IsLiked: false})
 	}
 }
 
@@ -34,7 +49,7 @@ func (a *App) getFollowings() {
 	for _, user := range resp.Users {
 		username := strings.ToLower(user.Username)
 		a.followings[username] = true
-		a.db2.Write("followings", username, InstagramUser{ID: user.ID, Username: username})
+		a.db2.Write("followings", username, InstagramUser{ID: user.ID, Username: username, IsPrivate: user.IsPrivate, IsLiked: false})
 	}
 }
 
