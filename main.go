@@ -36,8 +36,8 @@ type Fish struct{ Name string }
 
 func main() {
 	// outstanding title!
-	fmt.Printf("  ___ _ __ _ __ ___  ___  ___\n")
-	fmt.Printf(" / _ \\ '__| '_ \\`_ \\/ _ \\/ __|\n")
+	fmt.Printf("  ___ _ __ _ __ ___   ___  ___\n")
+	fmt.Printf(" / _ \\ '__|` _ \\'_ \\ / _ \\/ __|\n")
 	fmt.Printf("|  __/ |  | | | | | |  __/\\__ \\\n")
 	fmt.Printf(" \\___|_|  |_| |_| |_|\\___||___/\n\n")
 

@@ -53,7 +53,8 @@ func (a *App) likePosts(types string) {
 
 		resp, err := a.api.UserFeed(f.ID, "", "")
 		if err != nil {
-			log.Panicf("Got error when getting UserFeed: %s", err)
+			log.Printf("ERROR: on 'UserFeed' %s", err)
+			continue
 		}
 
 		// log.Printf("\nFeed: %+v", resp)
@@ -74,7 +75,8 @@ func (a *App) likePosts(types string) {
 
 			respLike, errLike := a.api.Like(item.ID)
 			if errLike != nil {
-				log.Panicf("Got error when 'Liking': %s", errLike)
+				log.Printf("ERROR: on 'like' %s", errLike)
+				continue
 			}
 
 			n++
