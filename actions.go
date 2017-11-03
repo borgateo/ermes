@@ -19,14 +19,28 @@ func (a *App) Unfollow() {
 	a.unfollowLeeches()
 }
 
-// Like user's feed
-func (a *App) LikeFeedFollowers() {
-	a.getFollowers()
+// Like followers's feed
+func (a *App) LikeFeedFollowers(hasNew bool) {
+	if hasNew == true {
+		a.getFollowers()
+	}
 	a.likeFollowersPosts()
 }
 
-// Like user's feed
-func (a *App) LikeFeedFollowings() {
-	a.getFollowings()
+// Like followings's feed
+func (a *App) LikeFeedFollowings(hasNew bool) {
+	if hasNew == true {
+		a.getFollowings()
+	}
 	a.likeFollowingsPosts()
+}
+
+func (a *App) ShadowUser(username string, hasNew bool) {
+	if hasNew == true {
+		user := a.GetUserByUsername(username)
+		a.getUserFollowers(user)
+		a.checkUserFollowers()
+	}
+
+	a.likeAndFollow()
 }
