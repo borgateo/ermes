@@ -48,6 +48,8 @@ func main() {
 	// examples:
 	// ./ermes -followers -reset
 	// ./ermes -followers -reset=true
+	// ./ermes -unfollow
+	unfollowPtr := flag.Bool("unfollow", false, "Unfollow the ingrates.")
 	followersPtr := flag.Bool("followers", false, "Like user's followers.")
 	followingsPtr := flag.Bool("followings", false, "Like user's followings.")
 	resetPtr := flag.Bool("reset", false, "Fetch user's connections, and resets the DB.")
@@ -61,7 +63,9 @@ func main() {
 
 	app.InitDB()
 
-	//app.Unfollow()
+	if *unfollowPtr == true {
+		app.Unfollow()
+	}
 
 	if *userPtr != "empty" {
 		app.ShadowUser(*userPtr, *resetPtr)
@@ -74,19 +78,5 @@ func main() {
 	if *followingsPtr == true {
 		app.LikeFeedFollowings(*resetPtr)
 	}
-
-	// morefish, _ := app.db2.ReadAll("followings")
-
-	// // iterate over morefish creating a new fish for each record
-	// fishies := []InstagramUser{}
-	// for _, fish := range morefish {
-	// 	f := InstagramUser{}
-	// 	json.Unmarshal([]byte(fish), &f)
-	// 	fmt.Printf("You have %v \n", f.IsPrivate)
-	// 	if f.IsPrivate == false && f.IsLiked == false {
-	// 		fishies = append(fishies, f)
-	// 	}
-
-	// }
 
 }

@@ -4,10 +4,9 @@ import (
 	"log"
 )
 
-// Unfollow jerks
+// Unfollow ingrates
 func (a *App) Unfollow() {
-	// Collect data.
-	log.Println("Beginning the data collection process...")
+	log.Println("Collecting data...\n")
 	a.getFollowers()
 	a.getFollowings()
 
@@ -35,6 +34,7 @@ func (a *App) LikeFeedFollowings(hasNew bool) {
 	a.likeFollowingsPosts()
 }
 
+// Like and follow user's followers
 func (a *App) ShadowUser(username string, hasNew bool) {
 	if hasNew == true {
 		user := a.GetUserByUsername(username)
