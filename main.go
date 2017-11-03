@@ -45,10 +45,11 @@ func main() {
 	fmt.Printf("╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝\n\n")
 
 	// CLI flags
-	// examples:
+	// Available commands:
+	// ./ermes -unfollow
 	// ./ermes -followers -reset
 	// ./ermes -followers -reset=true
-	// ./ermes -unfollow
+	// ./ermes -user=username -reset=true
 	unfollowPtr := flag.Bool("unfollow", false, "Unfollow the ingrates.")
 	followersPtr := flag.Bool("followers", false, "Like user's followers.")
 	followingsPtr := flag.Bool("followings", false, "Like user's followings.")
