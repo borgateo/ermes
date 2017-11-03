@@ -19,17 +19,11 @@ If you have already govendor install, start from point 2:
 3. `$ go build`
 4. `$ ./ermes`
 
-There are several flags available when you launch ermes:
+There are several flags available:
 
-Unfollow people that don't follow you back:
-`./ermes -unfollow`
-
-Like your followers or followings media:
-`	./ermes -followers`
-`	./ermes -followings`
-
-Follow passed user's followers and like their media:
-`./ermes -user=username -reset=true`
+- Unfollow people that don't follow you back: `./ermes -unfollow`
+- Like your followers or followings media: `	./ermes -followers` or `	./ermes -followings`
+- Follow passed user's followers and like their media: `./ermes -user=username -reset=true`
 
 ## Run w/ docker-compose
 ### Requirements
