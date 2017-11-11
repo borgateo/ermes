@@ -14,11 +14,13 @@ type Informations struct {
 	UUID      string
 	RankToken string
 	Token     string
+	PhoneID   string
 }
 
 type Instagram struct {
-	cookiejar *cookiejar.Jar
+	Cookiejar *cookiejar.Jar
 	InstaType
+	Transport http.Transport
 }
 
 type InstaType struct {
@@ -26,7 +28,7 @@ type InstaType struct {
 	Informations Informations
 	LoggedInUser response.User
 
-	proxy string
+	Proxy string
 }
 
 type BackupType struct {

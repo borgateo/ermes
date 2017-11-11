@@ -3,16 +3,16 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "rc/YsbTGYwCaHW+Z4bAMaUQxz5o=",
+			"checksumSHA1": "+k2eVsRiyTX4CuH4FiV+UzvsrsQ=",
 			"path": "github.com/ahmdrz/goinsta",
-			"revision": "f01a9e641aca950972fd6cedeac07963be24e542",
-			"revisionTime": "2017-06-29T12:26:21Z"
+			"revision": "82b8eb0d9a3b687b2be5809fc0946a68d5170875",
+			"revisionTime": "2017-11-03T10:03:46Z"
 		},
 		{
-			"checksumSHA1": "ekJ9DFgGVDbYtTFpgn+mhasdC6M=",
+			"checksumSHA1": "VlznpO/0B1vg0L/P9/0tdkQn/Bo=",
 			"path": "github.com/ahmdrz/goinsta/response",
-			"revision": "f01a9e641aca950972fd6cedeac07963be24e542",
-			"revisionTime": "2017-06-29T12:26:21Z"
+			"revision": "82b8eb0d9a3b687b2be5809fc0946a68d5170875",
+			"revisionTime": "2017-11-03T10:03:46Z"
 		},
 		{
 			"checksumSHA1": "TW1TbIL4RRT4fpdvwVxph25vdKw=",

@@ -65,14 +65,21 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, err error) {
 	req.Header.Set("User-Agent", GOINSTA_USER_AGENT)
 
 	client := &http.Client{
-		Jar: insta.cookiejar,
+		Jar: insta.Cookiejar,
 	}
-	if insta.proxy != "" {
-		proxy, err := url.Parse(insta.proxy)
+
+	if insta.Proxy != "" {
+		proxy, err := url.Parse(insta.Proxy)
 		if err != nil {
 			return body, err
 		}
-		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxy)}
+		insta.Transport.Proxy = http.ProxyURL(proxy)
+
+		client.Transport = &insta.Transport
+	} else {
+		// Remove proxy if insta.Proxy was removed
+		insta.Transport.Proxy = nil
+		client.Transport = &insta.Transport
 	}
 
 	resp, err := client.Do(req)
@@ -82,7 +89,7 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, err error) {
 	defer resp.Body.Close()
 
 	u, _ = url.Parse(GOINSTA_API_URL)
-	for _, value := range insta.cookiejar.Cookies(u) {
+	for _, value := range insta.Cookiejar.Cookies(u) {
 		if strings.Contains(value.Name, "csrftoken") {
 			insta.Informations.Token = value.Value
 		}

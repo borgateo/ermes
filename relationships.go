@@ -9,9 +9,31 @@ import (
 	"time"
 )
 
+// getFollowing gets users that we follow.
+func (a *App) getFollowings() {
+	fmt.Println("Collecting your 'Followings' list...")
+	resp, err := a.api.SelfTotalUserFollowing()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, user := range resp.Users {
+		username := strings.ToLower(user.Username)
+		a.followings[username] = true
+		a.db2.Write("followings", username, InstagramUser{
+			ID:        user.ID,
+			Username:  username,
+			IsPrivate: user.IsPrivate,
+			IsLiked:   false,
+			IsGood:    true,
+			IsChecked: true,
+		})
+	}
+}
+
 // getFollowers gets users that follow us.
 func (a *App) getFollowers() {
-	log.Println("Collecting your 'Followers' list")
+	log.Println("Collecting your 'Followers' list...")
 
 	// Resp data
 	// Username: string
@@ -32,34 +54,47 @@ func (a *App) getFollowers() {
 	for _, user := range resp.Users {
 		username := strings.ToLower(user.Username)
 
-		log.Printf("USER data %+v \n", user)
-
+		uptUser := InstagramUser{
+			ID:        user.ID,
+			Username:  username,
+			IsPrivate: user.IsPrivate,
+			IsLiked:   false,
+			IsGood:    true,
+			IsChecked: true,
+		}
 		a.followers[username] = true
-		a.db2.Write("followers", username, InstagramUser{ID: user.ID, Username: username, IsPrivate: user.IsPrivate, IsLiked: false})
+		a.db2.Write("followers", username, uptUser)
 	}
 }
 
 func (a *App) getUserFollowers(vip *InstagramUser) {
-	fmt.Printf("Getting %s's followers 🐶 \n\n", vip.Username)
+	fmt.Printf("Collecting %s's followers 🐶 \n\n", vip.Username)
+	collection := "user_followers_" + vip.Username
 
-	resp, err := a.api.UserFollowers(vip.ID, "")
+	resp, err := a.api.TotalUserFollowers(vip.ID)
 	if err != nil {
 		panic(err)
 	}
 
 	// --- Structure ---
-	// Username
-	// HasAnonymousProfilePicture: false
-	// ProfilePictureID: 1500417914300789823_408446133
-	// ProfilePictureURL
-	// FullName:
-	// ID: number
-	// IsVerified: false
-	// IsPrivate: false
-	// IsFavorite: false
-	// IsUnpublished: false
+	// BigList: false
+	// PageSize: 200
+	// Users: []
+	// log.Printf("There are %v \n", len(resp.Users))
+	// log.Printf("There are %+v \n", resp)
 
 	for _, user := range resp.Users {
+		// --- Structure ---
+		// Username
+		// HasAnonymousProfilePicture: false
+		// ProfilePictureID: 1500417914300789823_408446133
+		// ProfilePictureURL
+		// FullName:
+		// ID: number
+		// IsVerified: false
+		// IsPrivate: false
+		// IsFavorite: false
+		// IsUnpublished: false
 		// log.Printf("USER data %+v \n", user)
 
 		username := strings.ToLower(user.Username)
@@ -68,30 +103,17 @@ func (a *App) getUserFollowers(vip *InstagramUser) {
 			Username:  username,
 			IsPrivate: user.IsPrivate,
 			IsLiked:   false,
+			IsChecked: false,
+			IsGood:    false,
 		}
 
-		a.db2.Write("user_followers", username, currentUser)
-	}
-}
-
-// getFollowing gets users that we follow.
-func (a *App) getFollowings() {
-	log.Println("Collecting your 'Followings' list")
-	resp, err := a.api.SelfTotalUserFollowing()
-	if err != nil {
-		panic(err)
-	}
-
-	for _, user := range resp.Users {
-		username := strings.ToLower(user.Username)
-		a.followings[username] = true
-		a.db2.Write("followings", username, InstagramUser{ID: user.ID, Username: username, IsPrivate: user.IsPrivate, IsLiked: false})
+		a.db2.Write(collection, username, currentUser)
 	}
 }
 
 // check if user's followers are good to follow
-func (a *App) checkUserFollowers() {
-	collection := "user_followers"
+func (a *App) checkUserFollowers(username string) {
+	collection := "user_followers_" + username
 
 	results, _ := a.db2.ReadAll(collection)
 
@@ -99,12 +121,12 @@ func (a *App) checkUserFollowers() {
 	for _, user := range results {
 		iu := InstagramUser{}
 		json.Unmarshal([]byte(user), &iu)
-		if iu.IsPrivate == false && iu.IsLiked == false {
+		if iu.IsPrivate == false && iu.IsChecked == false {
 			data = append(data, iu)
 		}
 	}
 
-	fmt.Printf("There are %d followers to check\n", len(data))
+	fmt.Printf("There are %d followers to check 🔍 \n\n", len(data))
 
 	c := 0
 	for _, follower := range data {
@@ -114,16 +136,23 @@ func (a *App) checkUserFollowers() {
 
 		resp, err := a.api.GetUserByID(fID)
 		if err != nil {
-			log.Panicf("Got error when checking Follower %s", fUsername)
+			log.Printf("Got error checking %s. Moving on...", fUsername)
+			continue
 		}
 
 		// A very simple way to narrow down people that won't follow you back.
 		// People w/ tons of followers and a few followings don't give a shit about you.
-		isTooFamous := resp.User.FollowingCount < resp.User.FollowerCount
-		log.Printf("[%s][%v/%v] %d followings, %d followers, famous? %t", fUsername, c, len(data), resp.User.FollowingCount, resp.User.FollowerCount, isTooFamous)
+		isGood := resp.User.FollowingCount > resp.User.FollowerCount
+		log.Printf("[%v/%v][%s] %d followings, %d followers, is good? %t", c, len(data), fUsername, resp.User.FollowingCount, resp.User.FollowerCount, isGood)
 
-		// TODO: we set a bad follower as IsLiked: true, but there should be another property to describe that isn't good to follow
-		uptUser := InstagramUser{ID: follower.ID, Username: follower.Username, IsPrivate: follower.IsPrivate, IsLiked: isTooFamous}
+		uptUser := InstagramUser{
+			ID:        follower.ID,
+			Username:  follower.Username,
+			IsPrivate: follower.IsPrivate,
+			IsLiked:   false,
+			IsGood:    isGood,
+			IsChecked: true,
+		}
 		if err := a.db2.Write(collection, follower.Username, uptUser); err != nil {
 			fmt.Printf("Error while setting isLiked at true, %s", err)
 		}
@@ -140,11 +169,11 @@ func (a *App) unfollowLeeches() {
 	)
 
 	if remaining == 0 {
-		fmt.Printf("No leeches - Nothing to do\n")
+		fmt.Printf("Congrats! You have no ingrates\n")
 		return
 	}
 
-	fmt.Printf("\n 🖕 🖕 🖕  Beginning Unfollow 🖕 🖕 🖕 \n\n")
+	fmt.Printf("\n 🖕 🖕 🖕 unfollow 🖕 🖕 🖕 \n\n")
 
 	for _, username := range a.leeches {
 		if _, ok := a.followings[username]; !ok {

@@ -6,39 +6,44 @@
 ███████╗██║  ██║██║ ╚═╝ ██║███████╗███████║
 ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝
 ```
+## Features
+
+1. Follow all(*) the followers of a passed user
+2. Like the latest 3 (configurable) posts of all your followers
+3. Like the latest 3 (configurable) posts of all your followings
+4. Like the latest ~16 posts of your timeline
+5. Unfollow people that don't follow you back
+6. More coming soon...
+
+(*) Note: only the accounts that meet a specific criteria.
 
 ## Install
 `$ go get -v github.com/borteo/ermes`
 
-## Run w/o docker-compose
-
-If you have already govendor install, start from point 2:
+## Get started
+If you have already govendor installed, start from point 2:
 
 1. `$go get -u github.com/kardianos/govendor`
 2. `$ govendor sync`
 3. `$ go build`
-4. `$ ./ermes`
+4. `$ ./ermes [-h -followers -followings -user={username} -timeline] [-skip]`
 
-There are several flags available:
+Use the flag `-h` to see all the available flags.
 
-- Unfollow people that don't follow you back: `./ermes -unfollow`
-- Like your followers or followings media: `	./ermes -followers` or `	./ermes -followings`
-- Follow passed user's followers and like their media: `./ermes -user=username -reset=true`
+For instance, to run feature #5:
+`$ ./ermes -unfollow`
 
-## Run w/ docker-compose
-### Requirements
-Docker
-Docker-compose
+Note: `-skip` flag works only with followers, followings and user
 
-### How to run
-`docker-compose up --build`
 
-Refs:
+## Contributing
+This is a WIP project, feel free to fork it and/or create PRs/Issues.
 
+## Shout-out
 - https://github.com/ahmdrz/goinsta
 - https://github.com/kirsle/follow-sync
 
 
-### Disclaimer
+## Disclaimer
 
 This code is in no way affiliated with, authorized, maintained, sponsored or endorsed by Instagram or any of its affiliates or subsidiaries. This is an independent and unofficial pseudo-bot. Use at your own risk.

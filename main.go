@@ -33,8 +33,6 @@ func New() *App {
 	}
 }
 
-type Fish struct{ Name string }
-
 func main() {
 	// outstanding title!
 	fmt.Printf("\n███████╗██████╗ ███╗   ███╗███████╗███████╗\n")
@@ -45,16 +43,17 @@ func main() {
 	fmt.Printf("╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝\n\n")
 
 	// CLI flags
-	// Available commands:
+	// Available commands (./ermes -h):
 	// ./ermes -unfollow
+	// ./ermes -followers
 	// ./ermes -followers -reset
-	// ./ermes -followers -reset=true
-	// ./ermes -user=username -reset=true
-	unfollowPtr := flag.Bool("unfollow", false, "Unfollow the ingrates.")
+	// ./ermes -user=username -like
 	followersPtr := flag.Bool("followers", false, "Like user's followers.")
 	followingsPtr := flag.Bool("followings", false, "Like user's followings.")
-	resetPtr := flag.Bool("reset", false, "Fetch user's connections, and resets the DB.")
-	userPtr := flag.String("user", "empty", "Follow vip's followers")
+	skipPtr := flag.Bool("skip", false, "Skip users checks and start to like/follow.")
+	timelinePtr := flag.Bool("timeline", false, "Like timeline. Latest 16 posts.")
+	unfollowPtr := flag.Bool("unfollow", false, "Unfollow the ingrates.")
+	userPtr := flag.String("user", "empty", "Follow vip's followers.")
 
 	flag.Parse()
 
@@ -64,20 +63,24 @@ func main() {
 
 	app.InitDB()
 
+	if *timelinePtr == true {
+		app.LikeMyTimeline()
+	}
+
 	if *unfollowPtr == true {
 		app.Unfollow()
 	}
 
-	if *userPtr != "empty" {
-		app.ShadowUser(*userPtr, *resetPtr)
-	}
-
 	if *followersPtr == true {
-		app.LikeFeedFollowers(*resetPtr)
+		app.LikeFeedFollowers(*skipPtr)
 	}
 
 	if *followingsPtr == true {
-		app.LikeFeedFollowings(*resetPtr)
+		app.LikeFeedFollowings(*skipPtr)
+	}
+
+	if *userPtr != "empty" {
+		app.ShadowUser(*userPtr, *skipPtr)
 	}
 
 }

@@ -11,6 +11,9 @@ func (a *App) GetUserByUsername(username string) *InstagramUser {
 		ID:        resp.User.ID,
 		Username:  resp.User.Username,
 		IsPrivate: resp.User.IsPrivate,
+		IsChecked: false,
+		IsLiked:   false,
+		IsGood:    false,
 	}
 
 	return user
