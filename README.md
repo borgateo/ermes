@@ -8,12 +8,14 @@
 ```
 ## Features
 
-1. Follow all(*) the followers of a passed user
+1. Follow all(*) followers of a passed user
 2. Like the latest 3 (configurable) posts of all your followers
 3. Like the latest 3 (configurable) posts of all your followings
 4. Like the latest ~16 posts of your timeline
 5. Unfollow people that don't follow you back
 6. More coming soon...
+
+Configurable waiting time between operations
 
 (*) Note: only the accounts that meet a specific criteria.
 
