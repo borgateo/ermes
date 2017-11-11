@@ -25,7 +25,7 @@ Configurable waiting time between operations
 ## Get started
 If you have already govendor installed, start from point 2:
 
-1. `$go get -u github.com/kardianos/govendor`
+1. `$ go get -u github.com/kardianos/govendor`
 2. `$ govendor sync`
 3. `$ go build`
 4. `$ ./ermes [-h -followers -followings -user={username} -timeline] [-skip]`
