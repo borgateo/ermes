@@ -25,8 +25,8 @@ func (a *App) getFollowings() {
 			Username:  username,
 			IsPrivate: user.IsPrivate,
 			IsLiked:   false,
-			IsGood:    true,
 			IsChecked: true,
+			IsGood:    !user.IsPrivate,
 		})
 	}
 }
@@ -104,7 +104,7 @@ func (a *App) getUserFollowers(vip *InstagramUser) {
 			IsPrivate: user.IsPrivate,
 			IsLiked:   false,
 			IsChecked: false,
-			IsGood:    false,
+			IsGood:    !user.IsPrivate,
 		}
 
 		a.db2.Write(collection, username, currentUser)
@@ -183,7 +183,7 @@ func (a *App) unfollowLeeches() {
 
 		// Unfollow.
 		userIDStr := a.getUserId(username)
-		randomInt := random(a.Wait, a.Wait+10)
+		randomInt := random(a.Wait)
 		log.Printf("- [%d of %d]: %s (UID %s) ⏰ %ds\n", counter, remaining, username, userIDStr, randomInt)
 
 		// Convert the user ID from a string to an int.

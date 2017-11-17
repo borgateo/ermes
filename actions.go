@@ -24,6 +24,11 @@ func (a *App) Unfollow() {
 // Like followers's feed
 func (a *App) LikeFeedFollowers(skip bool) {
 	if skip != true {
+		// request user interaction
+		c := askForConfirmation("All your stored Followers will be removed. Do you really want to continue?", 3)
+		if c == false {
+			return
+		}
 		os.RemoveAll(config.DATA_PATH + config.FOLLOWERS)
 		a.getFollowers()
 	}
@@ -33,6 +38,11 @@ func (a *App) LikeFeedFollowers(skip bool) {
 // Like followings's feed
 func (a *App) LikeFeedFollowings(skip bool) {
 	if skip != true {
+		// request user interaction
+		c := askForConfirmation("All your stored Followings will be removed. Do you really want to continue?", 3)
+		if c == false {
+			return
+		}
 		os.RemoveAll(config.DATA_PATH + config.FOLLOWINGS)
 		a.getFollowings()
 	}
@@ -44,14 +54,13 @@ func (a *App) ShadowUser(username string, skip bool) {
 	if skip != true {
 		user := a.GetUserByUsername(username)
 		a.getUserFollowers(user)
-		a.checkUserFollowers(username)
 	}
 
+	a.checkUserFollowers(username)
 	a.likeAndFollowFeed(config.USER_FOLLOWERS + username)
 }
 
 // Like my feed
-
 func (a *App) LikeMyTimeline() {
 	page1, err := a.api.Timeline("")
 	if err != nil {

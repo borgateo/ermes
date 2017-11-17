@@ -117,7 +117,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool) {
 
 			nMedia++
 			log.Printf("👍  %v's media: [%v]", user.Username, item.ID)
-			time.Sleep(time.Duration(a.Wait) * time.Second)
+			time.Sleep(time.Duration(random(a.Wait)) * time.Second)
 		}
 
 		// set 'isLiked' at true
@@ -132,7 +132,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool) {
 			fmt.Printf("Error while setting isLiked at true, %s", err)
 		}
 
-		time.Sleep(time.Duration(a.Wait) * time.Second)
+		time.Sleep(time.Duration(random(a.Wait)) * time.Second)
 	}
 }
 
@@ -150,7 +150,7 @@ func (a *App) likeTimeline(timeline response.FeedsResponse) {
 		}
 
 		log.Printf("👍  %v's media: [%v]", item.User.Username, item.ID)
-		time.Sleep(time.Duration(a.Wait) * time.Second)
+		time.Sleep(time.Duration(random(a.Wait)) * time.Second)
 	}
 
 }

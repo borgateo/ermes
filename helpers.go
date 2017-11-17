@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -48,8 +51,11 @@ func (a *App) compareLists() {
 	}
 }
 
-func random(min, max int) int {
+func random(val int) int {
+	min := val - val/2
+	max := val + val/2
 	rand.Seed(time.Now().Unix())
+
 	return rand.Intn(max-min) + min
 }
 
@@ -76,4 +82,26 @@ func RemoveContents(dir string) error {
 		}
 	}
 	return nil
+}
+
+func askForConfirmation(s string, tries int) bool {
+	r := bufio.NewReader(os.Stdin)
+
+	for ; tries > 0; tries-- {
+		fmt.Printf("%s [y/n]: ", s)
+
+		res, err := r.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Empty input (i.e. "\n")
+		if len(res) < 2 {
+			continue
+		}
+
+		return strings.ToLower(strings.TrimSpace(res))[0] == 'y'
+	}
+
+	return false
 }
