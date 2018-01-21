@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/ahmdrz/goinsta/response"
+	"github.com/borteo/ermes/config"
 	humanize "github.com/dustin/go-humanize"
 )
 
@@ -32,6 +33,7 @@ func (a *App) getFollowings() error {
 			IsGood:    !user.IsPrivate,
 		})
 	}
+	return nil
 }
 
 // getFollowers gets users that follow us.
@@ -68,6 +70,7 @@ func (a *App) getFollowers() error {
 		a.followers[username] = true
 		a.db2.Write("followers", username, uptUser)
 	}
+	return nil
 }
 
 // Get passed user.ID followers.
@@ -140,7 +143,7 @@ func (a *App) getUserFollowers(vip *InstagramUser, isLimited bool) error {
 
 // check if user's followers are good to follow
 func (a *App) checkUserFollowers(username string) {
-	limit := 1000
+	limit := 2000
 	collection := "user_followers_" + username
 
 	results, _ := a.db2.ReadAll(collection)
@@ -163,7 +166,7 @@ func (a *App) checkUserFollowers(username string) {
 	}
 
 	fmt.Printf("🔍  There are %d followers to check; %d more available \n", len(data), totalUsersLen-len(data))
-	var delaySecs time.Duration = time.Duration(a.Wait*len(data)) * time.Second
+	var delaySecs time.Duration = time.Duration(config.WAITING_TIME*len(data)) * time.Second
 	fmt.Printf("⏱  %s \n\n", humanize.Time(time.Now().Add(delaySecs)))
 
 	counter := 0
@@ -195,7 +198,7 @@ func (a *App) checkUserFollowers(username string) {
 			fmt.Printf("Error while setting isLiked at true, %s", err)
 		}
 
-		time.Sleep(time.Duration(a.Wait) * time.Second)
+		time.Sleep(time.Duration(config.WAITING_TIME) * time.Second)
 	}
 }
 
@@ -221,7 +224,7 @@ func (a *App) unfollowLeeches() {
 
 		// Unfollow.
 		userIDStr := a.getUserId(username)
-		randomInt := random(a.Wait)
+		randomInt := random(config.WAITING_TIME)
 		log.Printf("- [%d of %d]: %s (UID %s) ⏰ %ds\n", counter, remaining, username, userIDStr, randomInt)
 
 		// Convert the user ID from a string to an int.

@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/ahmdrz/goinsta/response"
+	"github.com/borteo/ermes/config"
 	humanize "github.com/dustin/go-humanize"
 )
 
@@ -21,7 +20,7 @@ func (a *App) likeAndFollowFeed(types string, isLimited bool) {
 }
 
 func (a *App) getFilteredData(types string, isLimited bool) []InstagramUser {
-	limit := 1500
+	limit := config.FOLLOWERS_MAX
 	all, _ := a.db2.ReadAll(types)
 
 	// filter by non private, not liked yet
@@ -48,12 +47,8 @@ func (a *App) likeAndFollow(types string, shouldFollow bool, isLimited bool) {
 		nMedia        = 0
 		feedErrors    = 0
 		feedErrorsMax = 10
-		likeMaxString = os.Getenv("LIKE_MAX")
+		likeMax       = config.LIKE_MAX
 	)
-	likeMax, err := strconv.Atoi(likeMaxString)
-	if err != nil {
-		likeMax = 3
-	}
 
 	data := a.getFilteredData(types, isLimited)
 	fmt.Printf("%d users to process\n\n", len(data))
@@ -63,7 +58,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool, isLimited bool) {
 		fmt.Printf("\n")
 		log.Printf("\n")
 		fmt.Printf("Progress: %d/%d (%.2f%%) \n", nUsers, len(data), float64(nUsers)/float64(len(data))*float64(100))
-		var delaySecs time.Duration = time.Duration(a.Wait*(len(data)-nUsers)) * time.Second
+		var delaySecs time.Duration = time.Duration(config.WAITING_TIME*(len(data)-nUsers)) * time.Second
 		fmt.Printf("⏱  %s \n", humanize.Time(time.Now().Add(delaySecs)))
 
 		fmt.Printf("💕  Spreading love to '%+v'\n", user.Username)
@@ -126,7 +121,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool, isLimited bool) {
 
 			nMedia++
 			log.Printf("👍  %v's media: [%v]", user.Username, item.ID)
-			time.Sleep(time.Duration(random(a.Wait)) * time.Second)
+			time.Sleep(time.Duration(random(config.WAITING_TIME)) * time.Second)
 		}
 
 		// set 'isLiked' at true
@@ -141,7 +136,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool, isLimited bool) {
 			fmt.Printf("Error while setting isLiked at true, %s", err)
 		}
 
-		time.Sleep(time.Duration(random(a.Wait)) * time.Second)
+		time.Sleep(time.Duration(random(config.WAITING_TIME)) * time.Second)
 	}
 }
 
@@ -159,7 +154,7 @@ func (a *App) likeTimeline(timeline response.FeedsResponse) {
 		}
 
 		log.Printf("👍  %v's media: [%v]", item.User.Username, item.ID)
-		time.Sleep(time.Duration(random(a.Wait)) * time.Second)
+		time.Sleep(time.Duration(random(config.WAITING_TIME)) * time.Second)
 	}
 
 }

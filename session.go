@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/ahmdrz/goinsta"
+	"github.com/borteo/ermes/config"
 	scribble "github.com/nanobox-io/golang-scribble"
 )
 
@@ -25,7 +25,7 @@ func (a *App) Logout() {
 }
 
 func (a *App) InitDB() {
-	db, err := scribble.New(os.Getenv("STORAGE_PATH"), nil)
+	db, err := scribble.New(config.DATA_PATH, nil)
 	if err != nil {
 		log.Panicf("Error initializing DB: %s", err)
 	}

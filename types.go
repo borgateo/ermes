@@ -14,7 +14,6 @@ type App struct {
 	session    *mgo.Session
 	username   string
 	password   string
-	Wait       int             // How long to wait between instagram calls.
 	followings map[string]bool // who are we following?
 	followers  map[string]bool // who follows us?
 	leeches    []string        // users we follow who don't follow us back

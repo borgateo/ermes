@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -17,14 +16,7 @@ func New() *App {
 		log.Fatal("ERROR: something went wrong with your .env file")
 	}
 
-	waitingTimeString := os.Getenv("WAITING_TIME")
-	waitingTime, err := strconv.Atoi(waitingTimeString)
-	if err != nil {
-		waitingTime = 15
-	}
-
 	return &App{
-		Wait:       waitingTime,
 		username:   os.Getenv("USERNAME"),
 		password:   os.Getenv("PASSWORD"),
 		followings: map[string]bool{},
