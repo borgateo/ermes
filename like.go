@@ -9,17 +9,19 @@ import (
 	"time"
 
 	"github.com/ahmdrz/goinsta/response"
+	humanize "github.com/dustin/go-humanize"
 )
 
-func (a *App) likeFeed(types string) {
-	a.likeAndFollow(types, false)
+func (a *App) likeFeed(types string, isLimited bool) {
+	a.likeAndFollow(types, false, isLimited)
 }
 
-func (a *App) likeAndFollowFeed(types string) {
-	a.likeAndFollow(types, true)
+func (a *App) likeAndFollowFeed(types string, isLimited bool) {
+	a.likeAndFollow(types, true, isLimited)
 }
 
-func (a *App) getFilteredData(types string) []InstagramUser {
+func (a *App) getFilteredData(types string, isLimited bool) []InstagramUser {
+	limit := 1500
 	all, _ := a.db2.ReadAll(types)
 
 	// filter by non private, not liked yet
@@ -32,16 +34,20 @@ func (a *App) getFilteredData(types string) []InstagramUser {
 		}
 	}
 
-	fmt.Printf("\nYou have %d %v\n", len(all), types)
+	if isLimited && len(data) > limit {
+		data = data[0:limit]
+	}
+
+	fmt.Printf("\nYou have %d saved, and filtered %d %v\n", len(all), len(data), types)
 	return data
 }
 
-func (a *App) likeAndFollow(types string, shouldFollow bool) {
+func (a *App) likeAndFollow(types string, shouldFollow bool, isLimited bool) {
 	var (
 		nUsers        = 0
 		nMedia        = 0
 		feedErrors    = 0
-		feedErrorsMax = 5
+		feedErrorsMax = 10
 		likeMaxString = os.Getenv("LIKE_MAX")
 	)
 	likeMax, err := strconv.Atoi(likeMaxString)
@@ -49,7 +55,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool) {
 		likeMax = 3
 	}
 
-	data := a.getFilteredData(types)
+	data := a.getFilteredData(types, isLimited)
 	fmt.Printf("%d users to process\n\n", len(data))
 
 	for _, user := range data {
@@ -57,6 +63,9 @@ func (a *App) likeAndFollow(types string, shouldFollow bool) {
 		fmt.Printf("\n")
 		log.Printf("\n")
 		fmt.Printf("Progress: %d/%d (%.2f%%) \n", nUsers, len(data), float64(nUsers)/float64(len(data))*float64(100))
+		var delaySecs time.Duration = time.Duration(a.Wait*(len(data)-nUsers)) * time.Second
+		fmt.Printf("⏱  %s \n", humanize.Time(time.Now().Add(delaySecs)))
+
 		fmt.Printf("💕  Spreading love to '%+v'\n", user.Username)
 
 		resp, err := a.api.UserFeed(user.ID, "", "")
@@ -80,7 +89,7 @@ func (a *App) likeAndFollow(types string, shouldFollow bool) {
 		nMedia = 0
 		for _, item := range resp.Items {
 			// Don't like more than N pics
-			if nMedia == likeMax {
+			if nMedia == likeMax || nMedia == len(resp.Items) {
 				// When I reach the limit, I can follow the user
 				if shouldFollow == true {
 					_, errFollow := a.api.Follow(user.ID)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -30,9 +31,11 @@ func (a *App) LikeFeedFollowers(skip bool) {
 			return
 		}
 		os.RemoveAll(config.DATA_PATH + config.FOLLOWERS)
-		a.getFollowers()
+		if err := a.getFollowers(); err != nil {
+			panic(err)
+		}
 	}
-	a.likeFeed(config.FOLLOWERS)
+	a.likeFeed(config.FOLLOWERS, false)
 }
 
 // Like followings's feed
@@ -44,20 +47,29 @@ func (a *App) LikeFeedFollowings(skip bool) {
 			return
 		}
 		os.RemoveAll(config.DATA_PATH + config.FOLLOWINGS)
-		a.getFollowings()
+		if err := a.getFollowings(); err != nil {
+			panic(err)
+		}
 	}
-	a.likeFeed(config.FOLLOWINGS)
+	a.likeFeed(config.FOLLOWINGS, false)
 }
 
 // Like and follow user's followers
-func (a *App) ShadowUser(username string, skip bool) {
+func (a *App) ShadowUser(username string, skip bool, noCheck bool) {
 	if skip != true {
 		user := a.GetUserByUsername(username)
-		a.getUserFollowers(user)
+
+		if err := a.getUserFollowers(user, true); err != nil {
+			fmt.Printf("Error while getUserFollowers: , %s", err)
+			return
+		}
 	}
 
-	a.checkUserFollowers(username)
-	a.likeAndFollowFeed(config.USER_FOLLOWERS + username)
+	if noCheck != true {
+		a.checkUserFollowers(username)
+	}
+
+	a.likeAndFollowFeed(config.USER_FOLLOWERS+username, true)
 }
 
 // Like my feed

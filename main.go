@@ -50,6 +50,7 @@ func main() {
 	// ./ermes -user=username -like
 	followersPtr := flag.Bool("followers", false, "Like user's followers.")
 	followingsPtr := flag.Bool("followings", false, "Like user's followings.")
+	noCheckPtr := flag.Bool("no-check", false, "Check saved users.")
 	skipPtr := flag.Bool("skip", false, "Skip users checks and start to like/follow.")
 	timelinePtr := flag.Bool("timeline", false, "Like timeline. Latest 16 posts.")
 	unfollowPtr := flag.Bool("unfollow", false, "Unfollow the ingrates.")
@@ -80,7 +81,7 @@ func main() {
 	}
 
 	if *userPtr != "empty" {
-		app.ShadowUser(*userPtr, *skipPtr)
+		app.ShadowUser(*userPtr, *skipPtr, *noCheckPtr)
 	}
 
 }
